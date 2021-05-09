@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import QuestionCount from './QuestionCount'
 import Question from './Question'
-import { Button } from 'react-bootstrap';
 
 class Quiz extends Component {
     constructor(props){
@@ -29,17 +28,27 @@ class Quiz extends Component {
         
         return array;
     }
+    renderImgAnswerOptions(){
+        let qAndA = this.props.qAndA[this.props.quizNum];
+        let qAndAImg = qAndA.questionImage
+        if(this.props.scoreType === "numberScoringImg" && qAndA.questionImage !== ''){
+            return(
+                <div>
+                    <img src={qAndAImg} className='answer-option-img' alt={qAndA.question} />
+                </div>
+            )
+        }
+    }
     renderAnswerOptions(){
-        var qAndA = null;
-        qAndA = this.props.qAndA[this.props.quizNum];
+        let qAndA = this.props.qAndA[this.props.quizNum];
         var _questions = [];
         var i = 0;
         var nextQuizNum = this.props.quizNum + 1;
         while(i < qAndA.answers.length){
             // when the type is cummulative number scoring
-            if(this.props.scoreType === "numberScoring"){
+            if(this.props.scoreType === "numberScoring" || this.props.scoreType === "numberScoringImg"){
                 _questions.push(
-                    <Button
+                    <button
                         key={this.props.quizNum-i}
                         value={qAndA.answers[i].score} 
                         onClick={function(e) {
@@ -56,11 +65,11 @@ class Quiz extends Component {
                         variant="outline-dark" 
                         size="lg"
                         className="option-btn"
-                    >{qAndA.answers[i].content}</Button>)
+                    >{qAndA.answers[i].content}</button>)
             // when the type is each type counting
             } else if (this.props.scoreType === "typeCounting"){
                 _questions.push(
-                    <Button
+                    <button
                         key={this.props.quizNum-i}
                         value={qAndA.answers[i].type}
                         onClick={function(e) {
@@ -77,10 +86,10 @@ class Quiz extends Component {
                         variant="outline-dark" 
                         size="lg"
                         className="option-btn"
-                    >{qAndA.answers[i].content}</Button>)
+                    >{qAndA.answers[i].content}</button>)
             } else if (this.props.scoreType === "typeCountingMBTI"){
                 _questions.push(
-                    <Button
+                    <button
                         key={this.props.quizNum-i}
                         value={qAndA.answers[i].type}
                         onClick={function(e) {
@@ -94,11 +103,11 @@ class Quiz extends Component {
                                 this.props.onChangeMode(nextQuizNum, e.target.value, "quiz");
                             }
                         }.bind(this)}
-                        variant="outline-dark" 
+                        // variant="outline-dark" 
                         size="lg"
                         className="option-btn"
-                    >{qAndA.answers[i].content}</Button>)
-            }
+                    >{qAndA.answers[i].content}</button>)
+            } 
             i = i + 1;
         }
         _questions = this.arrayShuffler(_questions) // randomize answer option btn
@@ -111,6 +120,10 @@ class Quiz extends Component {
         return(
             <Fragment>
                 <Question question={this.props.qAndA[this.props.quizNum].question}></Question>
+                {/* In case of Quiz with Image Options */}
+                <Fragment>
+                    {this.renderImgAnswerOptions()}
+                </Fragment>
                 <div className="option-btn-div">
                     {this.renderAnswerOptions()}
                 </div>
